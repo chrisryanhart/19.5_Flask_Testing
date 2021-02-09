@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table>
+    <tbody>
+    
+{% for row in board %}
+        <tr>
+    {% for char in row %}
+            <!-- add id to char? -->
+            <td>{{char}}</td>
+        
+    {% endfor %}
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+<!-- page cannot refresh
+use AJAX -->
+<form action="/guess" method="POST">
+    <p>Enter Word: 
+        <input type="text" name="guess">
+        <button id="submit_guess">Submit</button>
+    </p>
+    
+</form>
+
+{% endblock %}
