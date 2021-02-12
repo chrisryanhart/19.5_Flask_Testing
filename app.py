@@ -1,77 +1,73 @@
 # don't allow the same word to be counted twice
 
 from boggle import Boggle
-from flask import Flask, session, request, redirect, render_template
+from flask import Flask, session, request, redirect, render_template, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-import app.js 
 
 boggle_game = Boggle()
 
-
 app=Flask(__name__)
 app.config['SECRET_KEY']='secret'
+app.config['TESTING']=True
+app.config['DEBUG_TB_HOSTS']=["dont-show-debug-toolbar"]
 
 debug=DebugToolbarExtension(app)
 
-# add debugger
 
-
-# use session throughout routes
-
-# start new game, make board
+# start new game, make board, retrieves high score/ games played
 @app.route('/')
-def generate_board():
+def start_game():
     board = boggle_game.make_board()
     session['board']=board
 
-    # import pdb
-    # pdb.set_trace()
-
-    # loop through board
-    # better to loop through in python or html
-
-    # breakpoint or debug with VScode
-
-    return render_template('boardDisplay.html', board=board)
+    keys = session.keys()
 
 
-@app.route('/')
-def display_board():
-    return
+    if "gameCount" in keys:
+        gameCount=session["gameCount"]
+    else:
+        session["gameCount"]=0
+
+    if "score" in keys:
+        score=session["gameCount"]
+    else:
+        session["score"]=0
+
+    score=session["score"]
+    gameCount=session["gameCount"]
+
+    return render_template('boardDisplay.html', board=board, gameCount=gameCount, score=score)
 
 
-@app.route('/guess', methods=['POST'])
-def make_guess():
-    # send guess as text to the server?  
-    # add form for user to make guess
-    # send guess to server
-    # use AJAX. Cannot refresh page
-    # update session
-
-    return redirect
-
-
-@app.route('/evaluatedval')
-def get_form_value():
-    # confirm word is valid
-    # give feedback to user
-    # respond with jsonify
-
-    # how to receive the form request from js
-
+# checks if word is valid and returns result
+@app.route('/evaluatedValue', methods=['POST'])
+def evaluate_value():
     
+    board=session['board']
+    word=request.json['word']
 
-    return render_template('evaluateVal.html')
+    word_result=boggle_game.check_valid_word(board, word)
 
-@app.route('/')
+    response = {"result": f"{word_result}"}
+
+    return jsonify(result=word_result)
+                    
+
+# saves high score and game count to session.  Returns updated high score.
+@app.route('/gameEnd', methods=["POST"])
 def send_result():
-    # send OK/NG message to front-end
-    # may combine with update_score
-    return
 
-@app.route('/')
-def update_score():
-    # send score to front-end
-    return
+    gameCount=session["gameCount"]+1
+    session["gameCount"]=gameCount
+
+    new_score = int(request.json["score"])
+    old_score = session["score"]
+
+    if new_score > old_score:
+        session["score"] = new_score
+        
+    updated_score = session["score"]
+
+    return f"High Score is {updated_score}"
 

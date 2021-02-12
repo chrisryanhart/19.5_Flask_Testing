@@ -19,12 +19,15 @@
 
 <!-- page cannot refresh
 use AJAX -->
-<form action="/guess" method="POST">
+<form action="" id="submit-form">
     <p>Enter Word: 
-        <input type="text" name="guess">
-        <button id="submit_guess">Submit</button>
+        <input type="text" name="guess" id='guess'>
+        <button id="submit-guess">Submit</button>
     </p>
     
 </form>
+
+<p>Games Played: <span id="game-count">{{gameCount}}</span></p>
+<p>Record Score: <span id="record-score">{{score}}</span></p>
 
 {% endblock %}

@@ -5,17 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base File</title>
-    <!-- <script src="/static/app.js"></script> -->
 
-<!-- add js and css links here? -->
 
 </head>
 <body>
+    <div>
+        <p>Current Score: <span id="score">0</span></p>
+        <p>Timer: <span id="time">15</span></p>
+    </div>
     {% block content %}    
     
     {% endblock %}
+    <p id="messages"></p>
+    <!-- <p>Games Played: <span id="game-count"></span></p> -->
 
+<script src="https://unpkg.com/jquery"></script>
 <script src="https://unpkg.com/axios/dist/axios.js"></script>
+<script src="https://unpkg.com/lodash"></script>
 <script src="/static/app.js"></script>
 
 </body>
