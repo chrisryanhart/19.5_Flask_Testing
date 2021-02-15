@@ -21,8 +21,9 @@ class FlaskTests(TestCase):
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            
-
+            self.assertIn(b'<p>Current Score',resp.data)
+            self.assertEqual(0,session.get('gameCount'))
+            self.assertEqual(0,session.get('score'))
 
     def test_evaluate_value(self):
         # should verify value is obtained from form
@@ -32,21 +33,20 @@ class FlaskTests(TestCase):
             
             # from solution
             # board = session['board']
-                sess=[['C','A','T','T','T'],
+                board=[['C','A','T','T','T'],
                 ['C','A','T','T','T'],
                 ['C','A','T','T','T'],
                 ['C','A','T','T','T'],
                 ['C','A','T','T','T'],
                 ]
+                sess['board']=board
             # sess['board']=board
 
             resp = client.post("/evaluatedValue", json={"word": 'cat'})
             html = resp.get_data(as_text=True)
 
-            # import pdb
-            # pdb.set_trace()
-
-            self.assertEqual(resp.status_code, 405)
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.json['result'],'ok')
 
 
     def test_update_score(self):
