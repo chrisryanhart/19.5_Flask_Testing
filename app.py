@@ -45,7 +45,7 @@ def start_game():
 
 
 # checks if word is valid and returns result
-@app.route('/evaluatedValue')
+@app.route('/evaluatedValue', methods=['POST'])
 def evaluate_value():
     
     board=session.get('board',0)
