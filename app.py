@@ -9,10 +9,12 @@ boggle_game = Boggle()
 
 app=Flask(__name__)
 app.config['SECRET_KEY']='secret'
-app.config['TESTING']=True
-app.config['DEBUG_TB_HOSTS']=["dont-show-debug-toolbar"]
 
-debug=DebugToolbarExtension(app)
+# These werent in the solution, but were in the notes
+# app.config['TESTING']=True
+# app.config['DEBUG_TB_HOSTS']=["dont-show-debug-toolbar"]
+
+# debug=DebugToolbarExtension(app)
 
 
 # start new game, make board, retrieves high score/ games played
@@ -37,14 +39,17 @@ def start_game():
     score=session["score"]
     gameCount=session["gameCount"]
 
+
+
     return render_template('boardDisplay.html', board=board, gameCount=gameCount, score=score)
 
 
 # checks if word is valid and returns result
-@app.route('/evaluatedValue', methods=['POST'])
+@app.route('/evaluatedValue')
 def evaluate_value():
     
-    board=session['board']
+    board=session.get('board',0)
+    session['board']=board
     word=request.json['word']
 
     word_result=boggle_game.check_valid_word(board, word)
@@ -55,14 +60,18 @@ def evaluate_value():
                     
 
 # saves high score and game count to session.  Returns updated high score.
-@app.route('/gameEnd', methods=["POST"])
+@app.route('/gameEnd', methods=['POST'])
 def send_result():
-
-    gameCount=session["gameCount"]+1
+   
+    
+    gameCount=session.get("gameCount",0)+1
     session["gameCount"]=gameCount
 
+
     new_score = int(request.json["score"])
-    old_score = session["score"]
+    old_score = session.get("score",0)
+
+    # breakpoint()
 
     if new_score > old_score:
         session["score"] = new_score

@@ -1,6 +1,6 @@
 from unittest import TestCase
 from app import app
-from flask import session
+from flask import session, Flask
 from boggle import Boggle
 
 app.config['DEBUG_TB_HOSTS']=["dont-show-debug-toolbar"]
@@ -27,26 +27,46 @@ class FlaskTests(TestCase):
     def test_evaluate_value(self):
         # should verify value is obtained from form
         # should return result if word was OK/NG
-        with app.test_client as client:
-            resp = client.post("http://127.0.0.1:5000/evaluatedValue", data = {"word": "word"})
+        with app.test_client() as client:
+            with client.session_transaction() as sess:
+            
+            # from solution
+            # board = session['board']
+                sess=[['C','A','T','T','T'],
+                ['C','A','T','T','T'],
+                ['C','A','T','T','T'],
+                ['C','A','T','T','T'],
+                ['C','A','T','T','T'],
+                ]
+            # sess['board']=board
+
+            resp = client.post("/evaluatedValue", json={"word": 'cat'})
             html = resp.get_data(as_text=True)
 
-            import pdb
-            pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
 
-            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(resp.status_code, 405)
 
 
     def test_update_score(self):
-        with app.test_client as client:
-            resp = client.post("http://127.0.0.1:5000/gameEnd", data={"score": 5})
+        with app.test_client() as client:
+            
+            # do I have a session value, if not then need to assign
+            # use session.get
+            # score = session.get('score')
+            resp = client.post("/gameEnd", json={"score": 5})
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
+            self.assertIn("gameCount", session)
+            self.assertIn(b'5',resp.data)
+
         # should handle score and player information from browser at end of game
         # should return string with high score
 
-
+# import json
+# from unittest.mock import patch
 
 
 
